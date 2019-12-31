@@ -192,7 +192,7 @@ const displayVisualizations = (years, scheduler, checkIfDateIsAcceptable, timeou
 };
 
 const years = [2020, 2021, 2022, 2023, 2024]
-const timeoutPerIteration = 10000;
+const timeoutPerIteration = 1000;
 /*
   Return true if a date should be open for scheduling.
   Return false if a date should not be open for scheduling.
