@@ -58,11 +58,11 @@ const generateStats = schedule => {
   let stats = {
     averageDaysBetweenDates: -1,
     maxDaysBetweenDates: -1,
-    minDaysBetweenDates: -1
+    minDaysBetweenDates: -1,
+    distribution: {}
   }
 
   stats.averageDaysBetweenDates = differenceInCalendarDays(schedule.endDate, schedule.startDate) / schedule.scheduledDates.length;
-
 
   schedule.scheduledDates = schedule.scheduledDates.sort(compareAsc);
   for(i = 0; i < schedule.scheduledDates.length - 1; i++) {
@@ -70,6 +70,14 @@ const generateStats = schedule => {
                         schedule.scheduledDates[i+1],
                         schedule.scheduledDates[i]
                        )
+    if(!stats.distribution) {
+      stats.distribution = { [difference]: 1 }
+    } else if(Object.keys(stats.distribution).includes(difference.toString())) {
+      stats.distribution[difference] = stats.distribution[difference] + 1
+    } else if(!Object.keys(stats.distribution).includes(difference.toString())) {
+      stats.distribution[difference] = 1
+    }
+
     if(i == 0) {
       stats.minDaysBetweenDates = difference
       stats.maxDaysBetweenDates = difference
@@ -83,6 +91,7 @@ const generateStats = schedule => {
       }
     }
   }
+
   return stats;
 }
 
@@ -162,7 +171,15 @@ const displayVisualizations = (years, scheduler, checkIfDateIsAcceptable, timeou
                                         }`
           const statsOutput = `Scheduled Day Statistics:\n\t Avg. Between Dates:\t ${stats.averageDaysBetweenDates}\n\t Min. Days Between Dates: ${stats.minDaysBetweenDates}\n\t Max Days Between Dates: ${stats.maxDaysBetweenDates}`
 
-          process.stdout.write(visualizationOutput + "\n" + infoOutput + "\n\n" + statsOutput);
+          const distributionOutput = (Object.keys(stats.distribution)).map((key) => {
+            let row = [`${key}: `]
+            for(let i = 0; i < stats.distribution[key]; i++) {
+              row.push(chalk.whiteBright('|'))
+            }
+            return row.join("");
+          }).join("\n")
+
+          process.stdout.write(visualizationOutput + "\n" + infoOutput + "\n\n" + statsOutput + "\n\n" + distributionOutput);
 
           resolve();
         },
@@ -175,7 +192,7 @@ const displayVisualizations = (years, scheduler, checkIfDateIsAcceptable, timeou
 };
 
 const years = [2020, 2021, 2022, 2023, 2024]
-const timeoutPerIteration = 1500;
+const timeoutPerIteration = 10000;
 /*
   Return true if a date should be open for scheduling.
   Return false if a date should not be open for scheduling.
