@@ -1,0 +1,16 @@
+{
+  "name": "schedule",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@18f/us-federal-holidays": "^1.4.0",
+    "chalk": "^3.0.0",
+    "date-fns": "^2.8.1"
+  }
+}
